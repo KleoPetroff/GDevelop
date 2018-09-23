@@ -13,6 +13,7 @@ import {
   unserializeFromJSObject,
 } from '../Utils/Serializer';
 import {
+  type HistoryState,
   undo,
   redo,
   canUndo,
@@ -62,7 +63,7 @@ const CLIPBOARD_KIND = 'EventsAndInstructions';
 
 type Props = {|
   project: gdProject,
-  layout: gdLayout,
+  layout: ?gdLayout,
   globalObjectsContainer: gdObjectsContainer,
   objectsContainer: gdObjectsContainer,
   events: gdEventsList,
@@ -80,7 +81,7 @@ type Props = {|
   resourceExternalEditors: Array<ResourceExternalEditor>,
 |};
 type State = {|
-  history: any, // TODO: Add typing for history (HistoryState<...>)
+  history: HistoryState,
 
   editedInstruction: {
     //TODO: This could be adapted to be a InstructionContext
@@ -659,11 +660,11 @@ export default class EventsSheet extends React.Component<Props, State> {
   };
 
   _openEventsContextAnalyzer = () => {
-    const { project, layout } = this.props;
+    const { globalObjectsContainer, objectsContainer } = this.props;
     const eventsContextAnalyzer = new gd.EventsContextAnalyzer(
       gd.JsPlatform.get(),
-      project,
-      layout
+      globalObjectsContainer,
+      objectsContainer
     );
 
     const eventsList = new gd.EventsList();
@@ -818,6 +819,8 @@ export default class EventsSheet extends React.Component<Props, State> {
               onRequestClose={this.closeParameterEditor}
               project={project}
               layout={layout}
+              globalObjectsContainer={globalObjectsContainer}
+              objectsContainer={objectsContainer}
               isCondition={this.state.editedParameter.isCondition}
               instruction={this.state.editedParameter.instruction}
               parameterIndex={this.state.editedParameter.parameterIndex}
@@ -974,7 +977,10 @@ export default class EventsSheet extends React.Component<Props, State> {
               <InstructionEditorDialog
                 project={project}
                 layout={layout}
-                {...this.state.editedInstruction}
+                globalObjectsContainer={globalObjectsContainer}
+                objectsContainer={objectsContainer}
+                instruction={this.state.editedInstruction.instruction}
+                isCondition={this.state.editedInstruction.isCondition}
                 isNewInstruction={
                   this.state.editedInstruction.indexInList === undefined
                 }
