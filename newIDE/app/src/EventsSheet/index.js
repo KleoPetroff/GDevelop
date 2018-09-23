@@ -63,6 +63,8 @@ const CLIPBOARD_KIND = 'EventsAndInstructions';
 type Props = {|
   project: gdProject,
   layout: gdLayout,
+  globalObjectsContainer: gdObjectsContainer,
+  objectsContainer: gdObjectsContainer,
   events: gdEventsList,
   setToolbar: (?React.Node) => void,
   updateToolbar: () => void,
@@ -730,6 +732,8 @@ export default class EventsSheet extends React.Component<Props, State> {
       events,
       onOpenExternalEvents,
       onOpenLayout,
+      globalObjectsContainer,
+      objectsContainer,
     } = this.props;
     if (!project) return null;
 
@@ -738,8 +742,8 @@ export default class EventsSheet extends React.Component<Props, State> {
         key={events.ptr}
         ref={eventSearcher => (this._eventSearcher = eventSearcher)}
         events={events}
-        project={project}
-        layout={layout}
+        globalObjectsContainer={globalObjectsContainer}
+        objectsContainer={objectsContainer}
         selection={this.state.selection}
       >
         {({
